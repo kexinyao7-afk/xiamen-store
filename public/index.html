@@ -65,6 +65,71 @@ body {
 
 .tab-content { display: none; animation: fadeIn 0.3s ease; }
 .tab-content.active { display: block; }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .app-container { padding: 12px 10px; }
+  .logo { font-size: 20px; }
+  .subtitle { font-size: 11px; display: none; }
+  .main-header { margin-bottom: 14px; gap: 8px; }
+  
+  .tab-bar { overflow-x: auto; flex-wrap: nowrap; gap: 4px; padding: 4px; }
+  .tab-btn { padding: 8px 14px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .tab-bar .tab-drag-hint { display: none; }
+  
+  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat-card { padding: 12px 8px; }
+  .stat-value { font-size: 20px; }
+  .stat-label { font-size: 10px; }
+  
+  .filter-bar { flex-direction: column; gap: 6px; }
+  .filter-bar select { width: 100%; }
+  .btn-filter-clear { width: 100%; text-align: center; }
+  
+  .task-card { padding: 12px; gap: 8px; flex-wrap: wrap; }
+  .task-card-left input[type=checkbox] { width: 22px; height: 22px; }
+  .task-card-main { flex: 1 1 100%; }
+  .task-title { font-size: 13px; }
+  .task-action { font-size: 11px; }
+  .task-meta { gap: 4px; }
+  .badge { font-size: 10px; padding: 2px 6px; }
+  .task-card-right { width: 100%; margin-top: 4px; }
+  .task-status { display: inline-block; }
+  
+  .overview-card { padding: 16px; }
+  .overview-card h3 { font-size: 15px; }
+  
+  .people-grid { gap: 6px; }
+  .people-chip { padding: 6px 10px; font-size: 11px; }
+  
+  .group-summary { gap: 8px; }
+  .group-summary-icon { width: 40px; height: 40px; font-size: 12px; }
+  .group-summary-name { font-size: 12px; }
+  .group-summary-cost { font-size: 12px; }
+  
+  .timeline { padding-left: 16px; }
+  .timeline-dot { left: -23px; width: 10px; height: 10px; }
+  
+  .optional-summary { flex-direction: column; gap: 10px; padding: 12px; }
+  .optional-grid { grid-template-columns: 1fr; }
+  
+  .info-grid { grid-template-columns: 1fr; }
+  .info-card { padding: 16px; }
+  
+  .optional-card { padding: 14px; }
+  .card-title { font-size: 13px; }
+  
+  .group-header { flex-wrap: wrap; gap: 6px; }
+  .group-title { font-size: 14px; }
+}
+
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-value { font-size: 18px; }
+  .logo { font-size: 18px; }
+}
+
+
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 .task-group { margin-bottom: 28px; }
