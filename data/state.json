@@ -214,7 +214,7 @@
       "group_name": "抖音及视频号组",
       "platform": "抖音店号",
       "title": "门店装修阶段预热",
-      "action": "拍摄装修进度、空间剧透、团队筹备等内容进行开业前预热",
+      "action": "门店装修阶段预热系列（精神股东）",
       "due_date": "7月31日起",
       "owner": "鑫璇、微微",
       "collaborators": "余兰、宇杰",
@@ -647,7 +647,7 @@
       "sub_items": null
     }
   ],
-  "optionals": [
+  "optional_items": [
     {
       "id": 1,
       "type": "达人追加",
