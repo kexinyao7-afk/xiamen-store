@@ -760,6 +760,8 @@ function showSaved() {
 
 let serverOnline = false;
 const API_BASE = window.location.origin;
+let localChangePending = false;
+let lastLocalChange = 0;
 
 async function syncToServer(url, data) {
   try {
@@ -769,6 +771,7 @@ async function syncToServer(url, data) {
 }
 
 async function pollFromServer() {
+  if (localChangePending && Date.now() - lastLocalChange < 5000) return;
   try {
     const [tRes, oRes] = await Promise.all([fetch(API_BASE + "/api/state"), fetch(API_BASE + "/api/state")]);
     if (!tRes.ok) { serverOnline = false; return; }
