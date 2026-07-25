@@ -17,7 +17,9 @@
       "note": "",
       "updated_by": "test",
       "updated_at": "2026-07-24T01:34:24.486Z",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "7月25日",
+      "completed_at": ""
     },
     {
       "id": 2,
@@ -36,7 +38,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "7月25日",
+      "completed_at": ""
     },
     {
       "id": 3,
@@ -55,7 +59,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": "[{\"id\":1,\"title\":\"预热城市海报-丽莎\",\"completed\":0},{\"id\":2,\"title\":\"预热环境海报-丽莎\",\"completed\":0},{\"id\":3,\"title\":\"公众号推文-丽莎\",\"completed\":0},{\"id\":4,\"title\":\"开业活动海报-林可欣\",\"completed\":0},{\"id\":5,\"title\":\"KOC打卡活动海报-林可欣\",\"completed\":0}]"
+      "sub_items": "[{\"id\":1,\"title\":\"预热城市海报-丽莎\",\"completed\":0},{\"id\":2,\"title\":\"预热环境海报-丽莎\",\"completed\":0},{\"id\":3,\"title\":\"公众号推文-丽莎\",\"completed\":0},{\"id\":4,\"title\":\"开业活动海报-林可欣\",\"completed\":0},{\"id\":5,\"title\":\"KOC打卡活动海报-林可欣\",\"completed\":0}]",
+      "planned_date": "7月28日",
+      "completed_at": ""
     },
     {
       "id": 4,
@@ -74,7 +80,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "7月25日—8月22日",
+      "completed_at": ""
     },
     {
       "id": 5,
@@ -93,7 +101,9 @@
       "note": "",
       "updated_by": "协作者",
       "updated_at": "2026-07-24T01:42:03.982Z",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月5日—8月20日",
+      "completed_at": ""
     },
     {
       "id": 6,
@@ -112,7 +122,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月7日",
+      "completed_at": ""
     },
     {
       "id": 7,
@@ -131,7 +143,9 @@
       "note": "",
       "updated_by": "协作者",
       "updated_at": "2026-07-24T04:04:02.279Z",
-      "sub_items": "[{\"id\":1,\"title\":\"预热（1条）\",\"completed\":0},{\"id\":2,\"title\":\"环境（1条）\",\"completed\":0},{\"id\":3,\"title\":\"产品 1/4\",\"completed\":0},{\"id\":4,\"title\":\"产品 2/4\",\"completed\":0},{\"id\":5,\"title\":\"产品 3/4\",\"completed\":0},{\"id\":6,\"title\":\"产品 4/4\",\"completed\":0},{\"id\":7,\"title\":\"活动预热（1条）\",\"completed\":0},{\"id\":8,\"title\":\"开业活动（1条）\",\"completed\":0},{\"id\":9,\"title\":\"koc打卡活动（林可欣安排制作）\",\"completed\":0},{\"id\":10,\"title\":\"路线（1条·视频/视频组制作·门店发布）\",\"completed\":0},{\"id\":11,\"title\":\"服务+产品硬广置顶（1条）\",\"completed\":0}]"
+      "sub_items": "[{\"id\":1,\"title\":\"预热（1条）\",\"completed\":0},{\"id\":2,\"title\":\"环境（1条）\",\"completed\":0},{\"id\":3,\"title\":\"产品 1/4\",\"completed\":0},{\"id\":4,\"title\":\"产品 2/4\",\"completed\":0},{\"id\":5,\"title\":\"产品 3/4\",\"completed\":0},{\"id\":6,\"title\":\"产品 4/4\",\"completed\":0},{\"id\":7,\"title\":\"活动预热（1条）\",\"completed\":0},{\"id\":8,\"title\":\"开业活动（1条）\",\"completed\":0},{\"id\":9,\"title\":\"koc打卡活动（林可欣安排制作）\",\"completed\":0},{\"id\":10,\"title\":\"路线（1条·视频/视频组制作·门店发布）\",\"completed\":0},{\"id\":11,\"title\":\"服务+产品硬广置顶（1条）\",\"completed\":0}]",
+      "planned_date": "7月31日—8月15日",
+      "completed_at": ""
     },
     {
       "id": 9,
@@ -150,7 +164,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": "[{\"id\":1,\"title\":\"平台基础建设（名片、快捷回复等）\",\"completed\":0},{\"id\":2,\"title\":\"提前5天投放收藏、咨询表现较好的产品笔记\",\"completed\":0}]"
+      "sub_items": "[{\"id\":1,\"title\":\"平台基础建设（名片、快捷回复等）\",\"completed\":0},{\"id\":2,\"title\":\"提前5天投放收藏、咨询表现较好的产品笔记\",\"completed\":0}]",
+      "planned_date": "8月11日起",
+      "completed_at": ""
     },
     {
       "id": 10,
@@ -169,7 +185,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月5日—8月15日",
+      "completed_at": ""
     },
     {
       "id": 11,
@@ -188,7 +206,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "开业后启动",
+      "completed_at": ""
     },
     {
       "id": 12,
@@ -207,7 +227,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": "[{\"id\":1,\"title\":\"门店装修阶段预热系列\",\"completed\":0},{\"id\":2,\"title\":\"服务介绍（1条）\",\"completed\":0},{\"id\":3,\"title\":\"路线（1条）\",\"completed\":0}]"
+      "sub_items": "[{\"id\":1,\"title\":\"门店装修阶段预热系列\",\"completed\":0},{\"id\":2,\"title\":\"服务介绍（1条）\",\"completed\":0},{\"id\":3,\"title\":\"路线（1条）\",\"completed\":0}]",
+      "planned_date": "7月31日—8月15日",
+      "completed_at": ""
     },
     {
       "id": 13,
@@ -226,7 +248,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "7月31日起",
+      "completed_at": ""
     },
     {
       "id": 14,
@@ -245,7 +269,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月11日起",
+      "completed_at": ""
     },
     {
       "id": 15,
@@ -264,7 +290,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月10日",
+      "completed_at": ""
     },
     {
       "id": 16,
@@ -283,7 +311,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月1日—8月22日",
+      "completed_at": ""
     },
     {
       "id": 17,
@@ -302,7 +332,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月5日—8月15日",
+      "completed_at": ""
     },
     {
       "id": 18,
@@ -321,7 +353,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月10日",
+      "completed_at": ""
     },
     {
       "id": 19,
@@ -340,7 +374,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月16日起",
+      "completed_at": ""
     },
     {
       "id": 20,
@@ -359,7 +395,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月16日—9月14日",
+      "completed_at": ""
     },
     {
       "id": 21,
@@ -378,7 +416,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月10日",
+      "completed_at": ""
     },
     {
       "id": 24,
@@ -397,7 +437,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月15日",
+      "completed_at": ""
     },
     {
       "id": 26,
@@ -416,7 +458,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月15日",
+      "completed_at": ""
     },
     {
       "id": 27,
@@ -435,7 +479,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月14日",
+      "completed_at": ""
     },
     {
       "id": 28,
@@ -454,7 +500,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": "[{\"id\":1,\"title\":\"全国门店微信公众号转发\",\"completed\":0},{\"id\":2,\"title\":\"厦门推文1篇\",\"completed\":0}]"
+      "sub_items": "[{\"id\":1,\"title\":\"全国门店微信公众号转发\",\"completed\":0},{\"id\":2,\"title\":\"厦门推文1篇\",\"completed\":0}]",
+      "planned_date": "8月5日—8月15日",
+      "completed_at": ""
     },
     {
       "id": 30,
@@ -473,7 +521,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": "[{\"id\":1,\"title\":\"设计定稿\",\"completed\":0},{\"id\":2,\"title\":\"设计印刷\",\"completed\":0},{\"id\":3,\"title\":\"门店展出\",\"completed\":0}]"
+      "sub_items": "[{\"id\":1,\"title\":\"设计定稿\",\"completed\":0},{\"id\":2,\"title\":\"设计印刷\",\"completed\":0},{\"id\":3,\"title\":\"门店展出\",\"completed\":0}]",
+      "planned_date": "8月12日",
+      "completed_at": ""
     },
     {
       "id": 31,
@@ -492,7 +542,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月12日",
+      "completed_at": ""
     },
     {
       "id": 32,
@@ -511,7 +563,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月12日",
+      "completed_at": ""
     },
     {
       "id": 34,
@@ -530,7 +584,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月22日",
+      "completed_at": ""
     },
     {
       "id": 35,
@@ -549,7 +605,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "9月14日",
+      "completed_at": ""
     },
     {
       "id": 36,
@@ -568,7 +626,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "7月25日—8月10日",
+      "completed_at": ""
     },
     {
       "id": 37,
@@ -587,7 +647,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "7月28日",
+      "completed_at": ""
     },
     {
       "id": 38,
@@ -606,7 +668,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月5日",
+      "completed_at": ""
     },
     {
       "id": 39,
@@ -625,7 +689,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "8月5日",
+      "completed_at": ""
     },
     {
       "id": 40,
@@ -644,7 +710,9 @@
       "note": "",
       "updated_by": "",
       "updated_at": "",
-      "sub_items": null
+      "sub_items": null,
+      "planned_date": "7月28日",
+      "completed_at": ""
     }
   ],
   "optional_items": [
