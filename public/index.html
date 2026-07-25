@@ -127,6 +127,7 @@ body {
   .stats-row { grid-template-columns: repeat(2, 1fr); }
   .stat-value { font-size: 18px; }
   .logo { font-size: 18px; }
+  #saveBtn { padding: 5px 10px; font-size: 11px; }
 }
 
 
@@ -265,7 +266,7 @@ body {
     <div class="header-right">
       <span id="syncDot" class="sync-dot"></span>
       <span id="syncText" style="font-size:12px;color:var(--text-muted)">本地模式</span>
-      <input type="text" id="userName" placeholder="输入你的名字" maxlength="20" style="margin-left:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;width:120px">
+      <button id="saveBtn" onclick="saveState();syncAllToServer();showSaved()" style="margin-left:8px;padding:6px 16px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s">保存</button><span id="savedHint" style="margin-left:6px;font-size:11px;color:var(--green);opacity:0;transition:opacity 0.3s">已保存 ✓</span><input type="text" id="userName" placeholder="输入你的名字" maxlength="20" style="margin-left:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;width:120px">
     </div>
   </header>
   <div class="tab-bar">
@@ -747,6 +748,16 @@ function updateOptionalSummary() {
 
 // ===== Actions =====
 function saveState() { try { localStorage.setItem('xm_state', JSON.stringify({ tasks: allTasks, optionals: allOptionals })); } catch {} }
+function syncAllToServer() {
+  if (!serverOnline) return;
+  syncToServer("/api/state", { tasks: allTasks, optionals: allOptionals });
+}
+function showSaved() {
+  var h = document.getElementById("savedHint");
+  h.style.opacity = "1";
+  setTimeout(function(){ h.style.opacity = "0"; }, 2000);
+}
+
 let serverOnline = false;
 const API_BASE = window.location.origin;
 
