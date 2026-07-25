@@ -728,7 +728,7 @@ function renderOptionalItems() {
       '<div class="optional-card-header"><div style="flex:1"><div class="card-type">'+escHtml(o.type)+'</div>' +
       '<div class="card-title">'+escHtml(o.title)+'</div><span class="card-platform">'+escHtml(o.platform)+'</span></div>' +
       '<button class="opt-toggle '+(o.selected?'on':'off')+'" onclick="event.stopPropagation();toggleOptional('+o.id+','+(o.selected?0:1)+')">'+(o.selected?'✓ 已选':'+ 选择')+'</button></div>' +
-      '<div class="card-cost-range">'+(o.minimum_cost===0 && o.maximum_cost===0 ? '置换/合作' : '预算：¥'+(o.minimum_cost||0).toLocaleString()+' — ¥'+(o.maximum_cost||0).toLocaleString())+'</div>' +
+      '<div class="card-cost-range">'+(o.minimum_cost===0 && o.maximum_cost===0 ? '置换/免费' : '预算：¥'+(o.minimum_cost||0).toLocaleString()+' — ¥'+(o.maximum_cost||0).toLocaleString())+'</div>' +
       '<div class="card-content">'+escHtml(o.content)+'</div>' +
       '<div class="card-effect">预计作用：'+escHtml(o.expected_effect)+'</div>' +
       '<div class="card-owner">负责人：'+escHtml(o.owner)+'</div>' +
