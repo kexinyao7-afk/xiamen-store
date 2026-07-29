@@ -134,11 +134,35 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes slideInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes slideOutDown { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
+@keyframes bellShake { 0%, 50%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(-15deg); } 20%, 40% { transform: rotate(15deg); } }
 .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
 .toast { background: #2d6a4f; color: #fff; padding: 12px 20px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.18); font-size: 13px; max-width: 340px; animation: slideInUp 0.35s ease; line-height: 1.5; }
 .toast .toast-who { font-weight: 700; font-size: 14px; }
 .toast .toast-detail { font-size: 12px; opacity: 0.85; margin-top: 2px; }
 .toast.removing { animation: slideOutDown 0.3s ease forwards; }
+
+/* Notification Bell */
+.notif-bell { position: relative; background: none; border: none; cursor: pointer; padding: 6px 10px; font-size: 18px; color: var(--text); }
+.notif-bell.ringing { animation: bellShake 0.6s ease; }
+.notif-badge { position: absolute; top: 0; right: 0; min-width: 18px; height: 18px; background: #e74c3c; color: #fff; border-radius: 9px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+.notif-dropdown { position: absolute; top: 100%; right: 0; width: 340px; max-height: 480px; background: var(--card-bg); border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); margin-top: 8px; overflow: hidden; display: none; z-index: 1000; }
+.notif-dropdown.open { display: block; animation: slideInUp 0.25s ease; }
+.notif-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8f6f0; }
+.notif-header-title { font-weight: 700; font-size: 14px; color: var(--green); }
+.notif-clear { font-size: 11px; color: var(--text-muted); background: none; border: none; cursor: pointer; }
+.notif-clear:hover { color: #e74c3c; }
+.notif-empty { padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+.notif-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 13px; transition: background 0.15s; }
+.notif-item:hover { background: #f8f6f0; }
+.notif-item:last-child { border-bottom: none; }
+.notif-item.unread { background: #f0f8f3; }
+.notif-who { font-weight: 700; color: var(--green); margin-right: 6px; }
+.notif-action { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.notif-detail { color: var(--text-secondary); margin: 4px 0; }
+.notif-tasks { font-size: 11px; color: var(--text-muted); padding-left: 8px; margin-top: 4px; }
+.notif-tasks .task-done { color: var(--green); }
+.notif-tasks .task-pending { color: var(--text-muted); }
+.notif-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
 
 .task-group { margin-bottom: 28px; }
 .group-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 2px solid var(--border); margin-bottom: 12px; }
@@ -273,6 +297,13 @@ body {
     <div class="header-right">
       <span id="syncDot" class="sync-dot"></span>
       <span id="syncText" style="font-size:12px;color:var(--text-muted)">本地模式</span>
+      <div style="position:relative; display:inline-block; margin-left:12px">
+        <button id="notifBtn" class="notif-bell" title="活动通知">🔔<span id="notifBadge" class="notif-badge" style="display:none">0</span></button>
+        <div id="notifDropdown" class="notif-dropdown">
+          <div class="notif-header"><span class="notif-header-title">📋 活动动态</span><button class="notif-clear" onclick="clearAllNotifications()">清空</button></div>
+          <div id="notifList"></div>
+        </div>
+      </div>
       <button id="saveBtn" onclick="saveState();syncAllToServer();showSaved()" style="margin-left:8px;padding:6px 16px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s">保存</button><span id="savedHint" style="margin-left:6px;font-size:11px;color:var(--green);opacity:0;transition:opacity 0.3s">已保存 ✓</span><input type="text" id="userName" placeholder="输入你的名字" maxlength="20" style="margin-left:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;width:120px">
     </div>
   </header>
@@ -325,7 +356,7 @@ const EMBEDDED = {"last_updated_by": "", "last_updated_at": "", "last_save_versi
 // ===== Init Data =====
 let allTasks = (EMBEDDED && EMBEDDED.tasks) ? EMBEDDED.tasks : [];
 let allOptionals = (EMBEDDED && EMBEDDED.optional_items) ? EMBEDDED.optional_items : [];
-const DATA_VERSION = 'v250729_sync_v2';
+const DATA_VERSION = 'v250729_notif_v3';
 try {
   const storedVersion = localStorage.getItem('xm_data_version');
   if (storedVersion !== DATA_VERSION) {
@@ -776,6 +807,92 @@ let lastLocalChange = 0;
 let lastKnownVersion = 0;
 let lastKnownUpdater = '';
 
+// ===== Notification System =====
+let notifications = [];
+let unreadCount = 0;
+
+function loadNotifications() {
+  try { notifications = JSON.parse(localStorage.getItem('xm_notifications')) || []; } catch(e) { notifications = []; }
+  unreadCount = parseInt(localStorage.getItem('xm_unread_count') || '0');
+}
+
+function saveNotifications() {
+  try {
+    localStorage.setItem('xm_notifications', JSON.stringify(notifications.slice(0, 50)));
+    localStorage.setItem('xm_unread_count', String(unreadCount));
+  } catch(e) {}
+}
+
+function addNotification(who, action, detail, tasks) {
+  notifications.unshift({ who, action, detail, tasks: tasks || [], time: Date.now() });
+  unreadCount++;
+  saveNotifications();
+  renderNotifList();
+  updateNotifBadge();
+  // Browser desktop notification
+  showDesktopNotification(who, action, detail, tasks);
+  // Shake bell
+  const bell = document.getElementById('notifBtn');
+  if (bell) {
+    bell.classList.remove('ringing');
+    void bell.offsetWidth; // restart animation
+    bell.classList.add('ringing');
+  }
+}
+
+function clearAllNotifications() {
+  notifications = [];
+  unreadCount = 0;
+  saveNotifications();
+  renderNotifList();
+  updateNotifBadge();
+}
+
+function updateNotifBadge() {
+  const badge = document.getElementById('notifBadge');
+  if (unreadCount > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderNotifList() {
+  const list = document.getElementById('notifList');
+  if (!list) return;
+  if (notifications.length === 0) {
+    list.innerHTML = '<div class="notif-empty">暂无动态</div>';
+    return;
+  }
+  list.innerHTML = notifications.slice(0, 30).map((n, i) => {
+    const time = new Date(n.time).toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
+    const tasksHtml = (n.tasks && n.tasks.length > 0)
+      ? '<div class="notif-tasks">' + n.tasks.slice(0, 3).map(t => '<div class="' + (t.completed ? 'task-done' : 'task-pending') + '">' + (t.completed ? '✅' : '⏳') + ' ' + t.title + '</div>').join('') + (n.tasks.length > 3 ? '<div class="task-pending">等 ' + n.tasks.length + ' 项</div>' : '') + '</div>'
+      : '';
+    return '<div class="notif-item' + (i < unreadCount ? ' unread' : '') + '"><span class="notif-who">' + n.who + '</span>' + n.action + (n.detail ? '<div class="notif-detail">' + n.detail + '</div>' : '') + tasksHtml + '<div class="notif-time">' + time + '</div></div>';
+  }).join('');
+}
+
+function showDesktopNotification(who, action, detail, tasks) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const taskStr = tasks && tasks.length > 0 ? ' · ' + tasks.slice(0, 2).map(t => t.title).join('、') : '';
+  const body = (detail || '') + taskStr;
+  try {
+    new Notification('🏪 厦门店进度更新', {
+      body: who + ' ' + action + (body ? '\n' + body : ''),
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏪</text></svg>',
+      tag: 'xiamen-store'
+    });
+  } catch(e) {}
+}
+
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
 // ===== Toast Notifications =====
 function showToast(who, action, detail) {
   var c = document.getElementById('toastContainer');
@@ -842,6 +959,7 @@ async function pollFromServer() {
       var detail = changedTasks.length > 0 ? changedTasks.slice(0,3).map(function(t){ return t.title + (t.completed?' ✅':' 🔄'); }).join('、') : '';
       if (changedTasks.length > 3) detail += ' 等' + changedTasks.length + '项';
       showToast(state.last_updated_by, '更新了进度', detail);
+      addNotification(state.last_updated_by, '更新了进度', detail, changedTasks.map(function(t){ return { title: t.title, completed: t.completed }; }));
     }
     if (changed) {
       saveState(); updateDashboard();
@@ -918,6 +1036,28 @@ function updateOptionalField(id, field, value) {
 document.addEventListener('DOMContentLoaded', () => {
   if (userName) document.getElementById('userName').value = userName;
   document.getElementById('userName').addEventListener('change', e => { userName = e.target.value.trim(); sessionStorage.setItem('xiamen_user', userName); });
+
+  // Notification bell
+  loadNotifications();
+  renderNotifList();
+  updateNotifBadge();
+  requestNotifPermission();
+  document.getElementById('notifBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    const dd = document.getElementById('notifDropdown');
+    dd.classList.toggle('open');
+    if (dd.classList.contains('open')) {
+      unreadCount = 0;
+      saveNotifications();
+      updateNotifBadge();
+    }
+  });
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('notifDropdown');
+    if (dd && !dd.contains(e.target) && !e.target.closest('.notif-bell')) {
+      dd.classList.remove('open');
+    }
+  });
   document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
   (function enableTabDrag(){
     var bar = document.querySelector('.tab-bar');
