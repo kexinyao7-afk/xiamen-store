@@ -9,6 +9,16 @@ const DB_FILE = path.join(__dirname, 'data', 'state.json');
 const NOTIFY_FILE = path.join(__dirname, 'data', 'notifications.json');
 const WECOM_WEBHOOK = process.env.WECOM_WEBHOOK || '';
 
+// Optional WeCom AI Bot (non-blocking)
+let bot = null;
+try {
+  bot = require('./bot-service');
+  bot.init();
+  console.log('🤖 WeCom Bot service loaded');
+} catch(e) {
+  console.log('⚠️  WeCom Bot not available, web notifications only:', e.message);
+}
+
 function readDB() {
   try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch(e) { return { tasks: [], optional_items: [], last_updated_by: '', last_updated_at: '', last_save_version: 0 }; }
 }
@@ -122,7 +132,7 @@ app.put('/api/optional-items/:id', (req, res) => {
 });
 
 // Notification endpoint (stores notifications, used by Web page)
-app.post('/api/notify', (req, res) => {
+app.post('/api/notify', async (req, res) => {
   try {
     const { who, action, detail, tasks: changedTasks } = req.body;
     const notifications = readNotifications();
@@ -136,8 +146,16 @@ app.post('/api/notify', (req, res) => {
     if (notifications.length > 50) notifications.length = 50;
     writeNotifications(notifications);
 
-    // WeCom webhook (if configured)
-    if (WECOM_WEBHOOK) {
+    // Try WeCom AI Bot (WebSocket - non-blocking)
+    let botResult = null;
+    if (bot) {
+      try {
+        botResult = await bot.sendNotification({ who, action, detail, tasks: changedTasks });
+      } catch(e) { botResult = { ok: false, error: e.message }; }
+    }
+
+    // WeCom webhook fallback
+    if ((!botResult || !botResult.ok) && WECOM_WEBHOOK) {
       const taskList = (changedTasks && changedTasks.length > 0)
         ? changedTasks.map(t => `> - ${t.title}${t.completed ? ' ✅' : ''}`).join('\n')
         : '';
@@ -145,18 +163,15 @@ app.post('/api/notify', (req, res) => {
       sendWecomMsg(msg);
     }
 
-    res.json({ ok: true });
+    res.json({ ok: true, bot: botResult });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Get notifications
+// Get notifications + bot status
 app.get('/api/notifications', (req, res) => {
-  res.json(readNotifications().slice(0, 20));
-});
-
-// Get notifications
-app.get('/api/notifications', (req, res) => {
-  res.json(readNotifications().slice(0, 20));
+  const notes = readNotifications().slice(0, 20);
+  const botStatus = bot ? bot.getStatus() : null;
+  res.json({ notifications: notes, bot: botStatus });
 });
 
 const PORT = process.env.PORT || 3000;
