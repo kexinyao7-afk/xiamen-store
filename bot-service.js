@@ -11,6 +11,17 @@ let discoveredChatIds = new Set();
 let connected = false;
 let authenticated = false;
 
+// Helper to extract chatid from various frame locations
+function extractChatId(frame) {
+  if (!frame) return null;
+  // Try multiple known locations
+  return frame.chatid
+      || frame.body?.chatid
+      || frame.body?.chat?.chatid
+      || frame.body?.from?.chatid
+      || null;
+}
+
 function init() {
   if (wsClient) return wsClient;
   wsClient = new AiBot.WSClient({
@@ -28,8 +39,8 @@ function init() {
     authenticated = true;
   });
 
-  wsClient.on('disconnected', () => {
-    console.log('⚠️  [WeCom Bot] Disconnected, will auto-reconnect');
+  wsClient.on('disconnected', (reason) => {
+    console.log('⚠️  [WeCom Bot] Disconnected:', reason, '- will auto-reconnect');
     connected = false;
     authenticated = false;
   });
@@ -38,26 +49,32 @@ function init() {
     console.error('❌ [WeCom Bot] Error:', err.message || err);
   });
 
-  // Capture ALL incoming frames to debug
+  // Catch any frame and capture chatid
   wsClient.on('message', (frame) => {
-    console.log('📨 [WeCom Bot] message event:', JSON.stringify({ chatid: frame?.chatid, type: frame?.body?.msgtype, text: frame?.body?.text?.content?.substring(0, 50) }));
-    if (frame && frame.chatid) {
-      discoveredChatIds.add(frame.chatid);
-    }
+    const cid = extractChatId(frame);
+    console.log('📨 [WeCom Bot] message frame:', JSON.stringify({
+      cid,
+      keys: Object.keys(frame || {}),
+      bodyKeys: frame?.body ? Object.keys(frame.body) : null,
+      msgtype: frame?.body?.msgtype
+    }).substring(0, 300));
+    if (cid) discoveredChatIds.add(cid);
   });
 
   // Handle text messages - reply and capture chatid
   wsClient.on('message.text', async (frame) => {
-    console.log('💬 [WeCom Bot] Text received:', JSON.stringify({ chatid: frame?.chatid, content: frame?.body?.text?.content }));
-    if (frame && frame.chatid) {
-      discoveredChatIds.add(frame.chatid);
-      // Reply immediately so user knows bot is alive
+    const cid = extractChatId(frame);
+    const text = frame?.body?.text?.content || '';
+    console.log('💬 [WeCom Bot] Text from', cid, ':', text.substring(0, 50));
+    if (cid) {
+      discoveredChatIds.add(cid);
+      // Reply to confirm
       try {
         await wsClient.reply(frame, {
           msgtype: 'markdown',
-          markdown: { content: '👋 **厦门店开业助手已就绪！**\n\n我会在这里推送项目进度更新。\n\n> 📍 已连接群聊' }
+          markdown: { content: '👋 **厦门店开业助手已就绪！**\n\n我会在这里推送项目进度更新。\n\n> 📍 Chat ID: `' + cid + '`' }
         });
-        console.log('✅ [WeCom Bot] Replied to', frame.chatid);
+        console.log('✅ [WeCom Bot] Replied to group');
       } catch(e) {
         console.error('❌ [WeCom Bot] Reply failed:', e.message);
       }
@@ -65,18 +82,14 @@ function init() {
   });
 
   wsClient.on('event.enter_chat', (frame) => {
-    console.log('👋 [WeCom Bot] Enter chat event:', JSON.stringify({ chatid: frame?.chatid }));
-    if (frame && frame.chatid) {
-      discoveredChatIds.add(frame.chatid);
-    }
+    const cid = extractChatId(frame);
+    console.log('👋 [WeCom Bot] Enter chat:', cid);
+    if (cid) discoveredChatIds.add(cid);
   });
 
-  // Catch any other events
   wsClient.on('event', (frame) => {
-    console.log('📡 [WeCom Bot] Generic event:', JSON.stringify({ chatid: frame?.chatid, event: frame?.body?.event_type }));
-    if (frame && frame.chatid) {
-      discoveredChatIds.add(frame.chatid);
-    }
+    const cid = extractChatId(frame);
+    if (cid) discoveredChatIds.add(cid);
   });
 
   wsClient.connect();
@@ -86,13 +99,11 @@ function init() {
 async function sendNotification({ who, action, detail, tasks }) {
   if (!wsClient) init();
   if (!authenticated) {
-    console.log('⏳ [WeCom Bot] Not authenticated yet, skipping');
     return { ok: false, reason: 'not_authenticated' };
   }
 
   const chatid = TARGET_CHATID || [...discoveredChatIds][0];
   if (!chatid) {
-    console.log('⏳ [WeCom Bot] No chatid known yet, waiting for first message');
     return { ok: false, reason: 'no_chatid' };
   }
 
@@ -107,7 +118,7 @@ async function sendNotification({ who, action, detail, tasks }) {
       msgtype: 'markdown',
       markdown: { content },
     });
-    console.log('📤 [WeCom Bot] Message sent to', chatid);
+    console.log('📤 [WeCom Bot] Sent to', chatid);
     return { ok: true, chatid };
   } catch (e) {
     console.error('❌ [WeCom Bot] Send failed:', e.message || e);
