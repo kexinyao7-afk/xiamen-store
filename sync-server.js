@@ -5,9 +5,14 @@ const https = require('https');
 const app = express();
 app.use(express.json());
 
+const bot = require('./bot-service');
+
 const DB_FILE = path.join(__dirname, 'data', 'state.json');
 const NOTIFY_FILE = path.join(__dirname, 'data', 'notifications.json');
 const WECOM_WEBHOOK = process.env.WECOM_WEBHOOK || '';
+
+// Initialize bot WebSocket connection on startup
+bot.init();
 
 function readDB() {
   try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch(e) { return { tasks: [], optional_items: [], last_updated_by: '', last_updated_at: '', last_save_version: 0 }; }
@@ -122,7 +127,7 @@ app.put('/api/optional-items/:id', (req, res) => {
 });
 
 // Notification endpoint
-app.post('/api/notify', (req, res) => {
+app.post('/api/notify', async (req, res) => {
   try {
     const { who, action, detail, tasks: changedTasks } = req.body;
     const notifications = readNotifications();
@@ -137,17 +142,38 @@ app.post('/api/notify', (req, res) => {
     if (notifications.length > 50) notifications.length = 50;
     writeNotifications(notifications);
 
-    // Send WeCom webhook if configured
-    if (WECOM_WEBHOOK) {
-      const taskList = (changedTasks && changedTasks.length > 0)
-        ? changedTasks.map(t => `> - ${t.title}${t.completed ? ' ✅' : ''}`).join('\n')
-        : '';
-      const msg = `## 🏪 厦门店进度更新\n**${who}** ${action}\n${detail}\n${taskList}\n<font color="comment">${new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'})}</font>`;
-      sendWecomMsg(msg);
+    let botResult = null;
+    let webhookResult = null;
+
+    // Try WeCom AI Bot (WebSocket) first
+    try {
+      botResult = await bot.sendNotification({ who, action, detail, tasks: changedTasks });
+    } catch(e) { botResult = { ok: false, error: e.message }; }
+
+    // Fallback to WeCom webhook (if configured)
+    if (!botResult || !botResult.ok) {
+      if (WECOM_WEBHOOK) {
+        const taskList = (changedTasks && changedTasks.length > 0)
+          ? changedTasks.map(t => `> - ${t.title}${t.completed ? ' ✅' : ''}`).join('\n')
+          : '';
+        const msg = `## 🏪 厦门店进度更新\n**${who}** ${action}\n${detail}\n${taskList}\n<font color="comment">${new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'})}</font>`;
+        sendWecomMsg(msg);
+        webhookResult = { ok: true };
+      }
     }
 
-    res.json({ ok: true, webhook_configured: !!WECOM_WEBHOOK });
+    res.json({
+      ok: true,
+      bot: botResult,
+      webhook: webhookResult,
+      bot_status: bot.getStatus()
+    });
   } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Bot status endpoint
+app.get('/api/bot-status', (req, res) => {
+  res.json(bot.getStatus());
 });
 
 // Get notifications
