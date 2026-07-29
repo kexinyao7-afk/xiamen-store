@@ -10,6 +10,9 @@ let wsClient = null;
 let discoveredChatIds = new Set();
 let connected = false;
 let authenticated = false;
+let lastFrameAt = null;
+let lastHeartbeatAt = null;
+let frameCount = 0;
 
 // Helper to extract chatid from various frame locations
 function extractChatId(frame) {
@@ -52,6 +55,8 @@ function init() {
   // Catch any frame and capture chatid
   wsClient.on('message', (frame) => {
     const cid = extractChatId(frame);
+    lastFrameAt = new Date().toISOString();
+    frameCount++;
     console.log('📨 [WeCom Bot] message frame:', JSON.stringify({
       cid,
       keys: Object.keys(frame || {}),
@@ -59,6 +64,18 @@ function init() {
       msgtype: frame?.body?.msgtype
     }).substring(0, 300));
     if (cid) discoveredChatIds.add(cid);
+  });
+
+  // Track ANY incoming frame
+  wsClient.onAny((eventName, ...args) => {
+    if (eventName.startsWith('message') || eventName.startsWith('event')) {
+      lastFrameAt = new Date().toISOString();
+    }
+  });
+
+  // Listen for heartbeat acks for health info
+  wsClient.on('heartbeat_ack', () => {
+    lastHeartbeatAt = new Date().toISOString();
   });
 
   // Handle text messages - reply and capture chatid
@@ -132,6 +149,10 @@ function getStatus() {
     authenticated,
     discoveredChatIds: [...discoveredChatIds],
     targetChatId: TARGET_CHATID || null,
+    lastFrameAt,
+    lastHeartbeatAt,
+    frameCount,
+    uptimeSeconds: Math.floor(process.uptime())
   };
 }
 
