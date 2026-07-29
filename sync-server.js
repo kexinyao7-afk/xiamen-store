@@ -5,14 +5,9 @@ const https = require('https');
 const app = express();
 app.use(express.json());
 
-const bot = require('./bot-service');
-
 const DB_FILE = path.join(__dirname, 'data', 'state.json');
 const NOTIFY_FILE = path.join(__dirname, 'data', 'notifications.json');
 const WECOM_WEBHOOK = process.env.WECOM_WEBHOOK || '';
-
-// Initialize bot WebSocket connection on startup
-bot.init();
 
 function readDB() {
   try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch(e) { return { tasks: [], optional_items: [], last_updated_by: '', last_updated_at: '', last_save_version: 0 }; }
@@ -126,8 +121,8 @@ app.put('/api/optional-items/:id', (req, res) => {
   res.json(db.optionals[idx]);
 });
 
-// Notification endpoint
-app.post('/api/notify', async (req, res) => {
+// Notification endpoint (stores notifications, used by Web page)
+app.post('/api/notify', (req, res) => {
   try {
     const { who, action, detail, tasks: changedTasks } = req.body;
     const notifications = readNotifications();
@@ -138,51 +133,25 @@ app.post('/api/notify', async (req, res) => {
       tasks: changedTasks || [],
       time: new Date().toISOString()
     });
-    // Keep only last 50
     if (notifications.length > 50) notifications.length = 50;
     writeNotifications(notifications);
 
-    let botResult = null;
-    let webhookResult = null;
-
-    // Try WeCom AI Bot (WebSocket) first
-    try {
-      botResult = await bot.sendNotification({ who, action, detail, tasks: changedTasks });
-    } catch(e) { botResult = { ok: false, error: e.message }; }
-
-    // Fallback to WeCom webhook (if configured)
-    if (!botResult || !botResult.ok) {
-      if (WECOM_WEBHOOK) {
-        const taskList = (changedTasks && changedTasks.length > 0)
-          ? changedTasks.map(t => `> - ${t.title}${t.completed ? ' ✅' : ''}`).join('\n')
-          : '';
-        const msg = `## 🏪 厦门店进度更新\n**${who}** ${action}\n${detail}\n${taskList}\n<font color="comment">${new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'})}</font>`;
-        sendWecomMsg(msg);
-        webhookResult = { ok: true };
-      }
+    // WeCom webhook (if configured)
+    if (WECOM_WEBHOOK) {
+      const taskList = (changedTasks && changedTasks.length > 0)
+        ? changedTasks.map(t => `> - ${t.title}${t.completed ? ' ✅' : ''}`).join('\n')
+        : '';
+      const msg = `## 🏪 厦门店进度更新\n**${who}** ${action}\n${detail}\n${taskList}\n<font color="comment">${new Date().toLocaleString('zh-CN', {timeZone:'Asia/Shanghai'})}</font>`;
+      sendWecomMsg(msg);
     }
 
-    res.json({
-      ok: true,
-      bot: botResult,
-      webhook: webhookResult,
-      bot_status: bot.getStatus()
-    });
+    res.json({ ok: true });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Bot status endpoint
-app.get('/api/bot-status', (req, res) => {
-  res.json(bot.getStatus());
-});
-
-// Restart bot endpoint (for debugging)
-app.post('/api/bot-restart', (req, res) => {
-  console.log('🔄 [Server] Bot restart requested');
-  delete require.cache[require.resolve('./bot-service')];
-  const newBot = require('./bot-service');
-  newBot.init();
-  res.json({ ok: true, message: 'Bot restarting' });
+// Get notifications
+app.get('/api/notifications', (req, res) => {
+  res.json(readNotifications().slice(0, 20));
 });
 
 // Get notifications
