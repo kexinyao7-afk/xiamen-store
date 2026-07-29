@@ -176,6 +176,15 @@ app.get('/api/bot-status', (req, res) => {
   res.json(bot.getStatus());
 });
 
+// Restart bot endpoint (for debugging)
+app.post('/api/bot-restart', (req, res) => {
+  console.log('🔄 [Server] Bot restart requested');
+  delete require.cache[require.resolve('./bot-service')];
+  const newBot = require('./bot-service');
+  newBot.init();
+  res.json({ ok: true, message: 'Bot restarting' });
+});
+
 // Get notifications
 app.get('/api/notifications', (req, res) => {
   res.json(readNotifications().slice(0, 20));
