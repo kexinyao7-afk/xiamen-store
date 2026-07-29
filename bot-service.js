@@ -38,25 +38,42 @@ function init() {
     console.error('❌ [WeCom Bot] Error:', err.message || err);
   });
 
-  // Capture chatid whenever any message comes in
+  // Capture ALL incoming frames to debug
   wsClient.on('message', (frame) => {
-    if (frame && frame.chatid) {
-      discoveredChatIds.add(frame.chatid);
-      console.log('📨 [WeCom Bot] Discovered chatid:', frame.chatid);
-    }
-  });
-  wsClient.on('message.text', (frame) => {
+    console.log('📨 [WeCom Bot] message event:', JSON.stringify({ chatid: frame?.chatid, type: frame?.body?.msgtype, text: frame?.body?.text?.content?.substring(0, 50) }));
     if (frame && frame.chatid) {
       discoveredChatIds.add(frame.chatid);
     }
   });
+
+  // Handle text messages - reply and capture chatid
+  wsClient.on('message.text', async (frame) => {
+    console.log('💬 [WeCom Bot] Text received:', JSON.stringify({ chatid: frame?.chatid, content: frame?.body?.text?.content }));
+    if (frame && frame.chatid) {
+      discoveredChatIds.add(frame.chatid);
+      // Reply immediately so user knows bot is alive
+      try {
+        await wsClient.reply(frame, {
+          msgtype: 'markdown',
+          markdown: { content: '👋 **厦门店开业助手已就绪！**\n\n我会在这里推送项目进度更新。\n\n> 📍 已连接群聊' }
+        });
+        console.log('✅ [WeCom Bot] Replied to', frame.chatid);
+      } catch(e) {
+        console.error('❌ [WeCom Bot] Reply failed:', e.message);
+      }
+    }
+  });
+
   wsClient.on('event.enter_chat', (frame) => {
+    console.log('👋 [WeCom Bot] Enter chat event:', JSON.stringify({ chatid: frame?.chatid }));
     if (frame && frame.chatid) {
       discoveredChatIds.add(frame.chatid);
-      console.log('👋 [WeCom Bot] Enter chat:', frame.chatid);
     }
   });
+
+  // Catch any other events
   wsClient.on('event', (frame) => {
+    console.log('📡 [WeCom Bot] Generic event:', JSON.stringify({ chatid: frame?.chatid, event: frame?.body?.event_type }));
     if (frame && frame.chatid) {
       discoveredChatIds.add(frame.chatid);
     }
